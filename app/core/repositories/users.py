@@ -15,3 +15,18 @@ def get_all_users() -> List[User]:
             users.append(user)
     return users
 
+
+def create_user(telegram_user_id, username, name, phone, channel_id) -> User:
+    with Session(engine) as session:
+        user = User(
+            telegram_user_id=telegram_user_id,
+            username=username,
+            name=name,
+            phone=phone,
+            channel_id=channel_id
+        )
+        session.add(user)
+        session.commit()
+
+        return user
+

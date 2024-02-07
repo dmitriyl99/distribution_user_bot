@@ -35,7 +35,7 @@ class User(Base):
     phone: Mapped[str] = mapped_column(String(20))
     channel_id: Mapped[int] = mapped_column(ForeignKey("channels.id"))
     distribution_id: Mapped[int] = mapped_column(ForeignKey("distributions.id"))
-    created_at: Mapped[datetime] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
 
     channel: Mapped[Channel] = relationship()
     distribution: Mapped[Distribution] = relationship()

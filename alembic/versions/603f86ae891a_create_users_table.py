@@ -26,8 +26,8 @@ def upgrade() -> None:
         sa.Column('username', sa.String(100), nullable=True),
         sa.Column('name', sa.String(200), nullable=False),
         sa.Column('phone', sa.String(20), nullable=True),
-        sa.Column('channel_id', sa.Integer, sa.ForeignKey("channels.id"), nullable=False),
-        sa.Column('distribution_id', sa.Integer, sa.ForeignKey("distributions.id")),
+        sa.Column('channel_id', sa.Integer, sa.ForeignKey("channels.id"), nullable=True),
+        sa.Column('distribution_id', sa.Integer, sa.ForeignKey("distributions.id"), nullable=True),
         sa.Column('created_at', sa.DateTime, default=sa.func.now()),
     )
 
