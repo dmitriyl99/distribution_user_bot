@@ -16,7 +16,7 @@ def generate_users_excel_file(users: List[User]) -> str:
     for index, user in enumerate(users):
         ws.append([
             index + 1,
-            user.telegram_chat_id,
+            user.telegram_user_id,
             user.username if user.username else 'Не определен',
             user.name,
             user.phone,
@@ -30,22 +30,22 @@ def generate_users_excel_file(users: List[User]) -> str:
     header_sells = ws["A1:K1"]
     thin = Side(border_style='thin', color="000000")
     for cell in header_sells:
-        cell.border = Border(
+        cell[0].border = Border(
             top=thin,
             left=thin,
             right=thin,
             bottom=thin
         )
-        cell.alignment = Alignment(horizontal="center", vertical="center")
+        cell[0].alignment = Alignment(horizontal="center", vertical="center")
     indexes_cells = ws[f"A1:A{len(users) + 1}"]
     for cell in indexes_cells:
-        cell.border = Border(
+        cell[0].border = Border(
             top=thin,
             left=thin,
             right=thin,
             bottom=thin
         )
-        cell.alignment = Alignment(horizontal="center", vertical="center")
+        cell[0].alignment = Alignment(horizontal="center", vertical="center")
 
     path = "storage/users.xlsx"
     wb.save(path)

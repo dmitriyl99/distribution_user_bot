@@ -20,7 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        "distribution",
+        "distributions",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
         sa.Column("name", sa.Text, nullable=False),
         sa.Column("interval_measure", sa.String(100), nullable=True),

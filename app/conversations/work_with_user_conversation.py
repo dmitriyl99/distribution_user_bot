@@ -19,7 +19,6 @@ async def start_conversation(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 
 async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    print("menu")
     if update.message.text == 'Наши подписчики':
         users = user_repository.get_all_users()
         if len(users) != 0:
@@ -29,7 +28,7 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("В базе ещё нет пользователей")
         return MENU
 
-    if update.message == 'Главное меню':
+    if update.message.text == 'Главное меню':
         await actions.send_main_menu(update)
         return ConversationHandler.END
 
@@ -42,7 +41,7 @@ conversation_handler = ConversationHandler(
     entry_points=[
         MessageHandler(filters.Regex("Работа с пользователями"), start_conversation)
     ], states={
-        MENU: [MessageHandler(filters.Regex("Наши подписчики"), menu)]
+        MENU: [MessageHandler(filters.Regex("^(Наши подписчики|Главное меню)$"), menu)]
     },
     fallbacks=[MessageHandler(filters.ALL, fallback)]
 )
