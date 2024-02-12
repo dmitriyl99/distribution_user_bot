@@ -9,6 +9,7 @@ MENU, NAME, DISTRIBUTION_TYPE, INTERVAL_MEASURE, INTERVAL_NUMBER, INTERVAL_COUNT
 
 async def start_conversation(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Меню рассылок", reply_markup=ReplyKeyboardMarkup([
+        [KeyboardButton("Список рассылок")],
         [KeyboardButton("Создать рассылку")],
         [KeyboardButton("Включить рассылку"), KeyboardButton("Отключить рассылку")],
         [KeyboardButton("На главную")]
@@ -24,6 +25,24 @@ async def process_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             [KeyboardButton("Назад")]
         ], resize_keyboard=True))
         return NAME
+
+    if update.message.text == 'Список рассылок':
+        distributions_list = distributions.get_all_distributions()
+        measure_mapper = {
+            'hour': 'часов',
+            'week': 'неделю',
+            'day': 'день'
+        }
+        for distribution in distributions_list:
+            if distribution.interval_measure:
+                await update.message.reply_html(f"Шаблон <b>{distribution.name}</b>\n\n"
+                                                f"Настройки: {distribution.interval_count} раз каждые "
+                                                f"{distribution.interval_number} {measure_mapper[distribution.interval_measure]}")
+            else:
+                await update.message.reply_html(f"Шаблон <b>{distribution.name}</b>\n\n"
+                                                f"Рассылка будет отправлена только один раз")
+
+        return MENU
 
     if update.message.text == 'На главную':
         await actions.send_main_menu(update)

@@ -1,3 +1,4 @@
+from typing import List, Type
 from sqlalchemy.orm import Session
 
 from app.core.db import engine
@@ -24,3 +25,8 @@ def create_distribution(
         session.refresh(distribution)
 
     return distribution
+
+
+def get_all_distributions() -> List[Type[Distribution]]:
+    with Session(engine) as session:
+        return session.query(Distribution).all()
