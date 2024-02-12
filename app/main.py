@@ -3,7 +3,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
 from app.settings import settings
-from app.conversations import work_with_user_conversation
+from app.conversations import work_with_user_conversation, distribution_conversation
 from app import actions
 
 
@@ -23,5 +23,6 @@ if __name__ == '__main__':
     start_handler = CommandHandler('start', start)
     application.add_handler(start_handler)
     application.add_handler(work_with_user_conversation.conversation_handler)
+    application.add_handler(distribution_conversation.conversation_handler)
 
     application.run_polling()
