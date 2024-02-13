@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
 from app.core.db import engine
-from app.core.models.models import User
+from app.core.models.models import User, Distribution
 
 
 def get_all_users() -> List[User]:
@@ -30,3 +30,10 @@ def create_user(telegram_user_id, username, name, phone, channel_id) -> User:
 
         return user
 
+
+def update_user_distribution(telegram_user_id, distribution: Distribution):
+    with Session(engine) as session:
+        user = session.query(User).filter(User.telegram_user_id == telegram_user_id).first()
+        if user:
+            user.distribution_id = distribution.id
+            session.commit()

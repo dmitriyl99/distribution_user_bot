@@ -30,3 +30,8 @@ def create_distribution(
 def get_all_distributions() -> List[Type[Distribution]]:
     with Session(engine) as session:
         return session.query(Distribution).all()
+
+
+def find_distribution_by_name(name) -> Distribution | None:
+    with Session(engine) as session:
+        return session.query(Distribution).filter(Distribution.name == name).first()

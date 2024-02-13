@@ -1,8 +1,10 @@
 from typing import List
 
-from app.core.models.models import User
+from app.core.models.models import User, Distribution
+from app.core.repositories import users as users_repository
+from app.core.repositories import distributions as distributions_repository
 
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.styles import Border, Side, Alignment
 
@@ -51,3 +53,17 @@ def generate_users_excel_file(users: List[User]) -> str:
     wb.save(path)
 
     return path
+
+
+def import_excel_file(path: str):
+    wb = load_workbook(filename=path)
+    ws: Worksheet = wb.active
+    for row in ws.iter_rows():
+        if not row[0].value:
+            continue
+        telegram_id = row[1].value
+        distribution_template_name = row[7].value
+
+        distribution = distributions_repository.find_distribution_by_name(distribution_template_name)
+        if distribution:
+            users_repository.update_user_distribution(telegram_id, distribution)
