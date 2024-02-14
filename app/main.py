@@ -4,7 +4,7 @@ from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 
 from app.settings import settings
 from app.conversations import work_with_user_conversation, distribution_conversation
-from app import actions
+from app import actions, scheduler
 
 
 logging.basicConfig(
@@ -25,4 +25,8 @@ if __name__ == '__main__':
     application.add_handler(work_with_user_conversation.conversation_handler)
     application.add_handler(distribution_conversation.conversation_handler)
 
+    scheduler.start()
+
     application.run_polling()
+
+    scheduler.stop()

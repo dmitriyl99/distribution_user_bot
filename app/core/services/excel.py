@@ -3,6 +3,7 @@ from typing import List
 from app.core.models.models import User, Distribution
 from app.core.repositories import users as users_repository
 from app.core.repositories import distributions as distributions_repository
+from app import scheduler
 
 from openpyxl import Workbook, load_workbook
 from openpyxl.worksheet.worksheet import Worksheet
@@ -62,8 +63,9 @@ def import_excel_file(path: str):
         if not row[0].value:
             continue
         telegram_id = row[1].value
-        distribution_template_name = row[7].value
+        distribution_template_name = row[9].value
 
         distribution = distributions_repository.find_distribution_by_name(distribution_template_name)
+        users_repository.update_user_distribution(telegram_id, distribution)
         if distribution:
-            users_repository.update_user_distribution(telegram_id, distribution)
+            scheduler.add_template(distribution)

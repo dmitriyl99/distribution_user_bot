@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Type
+from datetime import datetime
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
@@ -31,9 +32,24 @@ def create_user(telegram_user_id, username, name, phone, channel_id) -> User:
         return user
 
 
-def update_user_distribution(telegram_user_id, distribution: Distribution):
+def update_user_distribution(telegram_user_id, distribution: Distribution | None):
     with Session(engine) as session:
         user = session.query(User).filter(User.telegram_user_id == telegram_user_id).first()
         if user:
-            user.distribution_id = distribution.id
+            user.distribution_id = distribution.id if distribution else None
+            user.distribution_sent = False
+            user.distribution_date = None
             session.commit()
+
+
+def get_users_by_distribution_id(distribution_id: int) -> List[Type[User]]:
+    with Session(engine) as session:
+        return session.query(User).filter(User.distribution_id == distribution_id).all()
+
+
+def set_distribution_sent(user: User, distribution_date: datetime):
+    with Session(engine) as session:
+        session.add(user)
+        user.distribution_sent = True
+        user.distribution_date = distribution_date
+        session.commit()

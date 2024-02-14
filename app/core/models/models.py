@@ -1,6 +1,6 @@
 from . import Base
 
-from sqlalchemy import Integer, BigInteger, String, Text, ForeignKey, DateTime
+from sqlalchemy import Integer, BigInteger, String, Text, ForeignKey, DateTime, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 
@@ -33,6 +33,8 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(100))
     name: Mapped[str] = mapped_column(String(200))
     phone: Mapped[str] = mapped_column(String(20))
+    distribution_sent: Mapped[bool] = mapped_column(Boolean, default=False)
+    distribution_date: Mapped[datetime] = mapped_column(DateTime, default=None)
     channel_id: Mapped[int] = mapped_column(ForeignKey("channels.id"))
     distribution_id: Mapped[int] = mapped_column(ForeignKey("distributions.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)

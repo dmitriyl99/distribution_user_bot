@@ -4,38 +4,52 @@ from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.triggers.date import DateTrigger
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.memory import MemoryJobStore
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
+from app.scheduler.template import template
+
 
 _scheduler = BackgroundScheduler(
     jobstores={
-        'default': MemoryJobStore()
+        'default': SQLAlchemyJobStore(url='sqlite:///jobs.db')
     }
 )
 
 
-def _once_template():
-    pass
+def start():
+    _scheduler.start()
 
 
-def _interval_template():
-    pass
+def stop():
+    _scheduler.shutdown()
 
 
-def add_template(template: Distribution):
-    if not template.interval_measure:
-        _scheduler.add_job(_once_template, trigger=DateTrigger(run_date=datetime.now() + timedelta(minutes=2)))
+def add_template(distribution: Distribution):
+    print(f"adding template: {distribution.name}")
+    existing_job = _scheduler.get_job(f'distribution:{distribution.id}')
+    if existing_job:
         return
-    additional_counts = template.interval_number * template.interval_count
+    if not distribution.interval_measure:
+        _scheduler.add_job(
+            template,
+            trigger=DateTrigger(run_date=datetime.now() + timedelta(seconds=10)),
+            args=[distribution.id],
+            id=f'distribution:{distribution.id}'
+        )
+        return
+    additional_counts = distribution.interval_number * distribution.interval_count
     trigger = None
-    if template.interval_measure == 'hour':
-        trigger = IntervalTrigger(hours=template.interval_number, end_date=datetime.now() + timedelta(hours=additional_counts))
-    elif template.interval_measure == 'day':
-        trigger = IntervalTrigger(days=template.interval_number, end_date=datetime.now() + relativedelta(days=additional_counts))
-    elif template.interval_measure == 'week':
-        trigger = IntervalTrigger(weeks=template.interval_number, end_date=datetime.now() + relativedelta(weeks=additional_counts))
+    if distribution.interval_measure == 'hour':
+        trigger = IntervalTrigger(hours=distribution.interval_number, end_date=datetime.now() + timedelta(hours=additional_counts))
+    elif distribution.interval_measure == 'day':
+        trigger = IntervalTrigger(days=distribution.interval_number, end_date=datetime.now() + relativedelta(days=additional_counts))
+    elif distribution.interval_measure == 'week':
+        trigger = IntervalTrigger(weeks=distribution.interval_number, end_date=datetime.now() + relativedelta(weeks=additional_counts))
     if trigger:
-        _scheduler.add_job(_interval_template, trigger=trigger)
+        print(f"Add job distribution:{distribution.id}")
+        _scheduler.add_job(template, trigger=trigger, id=f'distribution:{distribution.id}', args=[distribution.id])
+
 

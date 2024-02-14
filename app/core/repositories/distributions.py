@@ -35,3 +35,8 @@ def get_all_distributions() -> List[Type[Distribution]]:
 def find_distribution_by_name(name) -> Distribution | None:
     with Session(engine) as session:
         return session.query(Distribution).filter(Distribution.name == name).first()
+
+
+def get_distribution_by_id(distribution_id: int) -> Distribution | None:
+    with Session(engine) as session:
+        return session.get(Distribution, distribution_id)
