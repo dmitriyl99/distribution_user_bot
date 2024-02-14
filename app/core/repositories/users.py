@@ -1,7 +1,7 @@
 from typing import List, Type
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import select, and_
 from sqlalchemy.orm import Session, joinedload
 
 from app.core.db import engine
@@ -19,6 +19,13 @@ def get_all_users() -> List[User]:
 
 def create_user(telegram_user_id, username, name, phone, channel_id) -> User:
     with Session(engine) as session:
+        user_exists = session.query(User).filter(and_(
+            User.telegram_user_id == telegram_user_id, User.channel_id == channel_id
+        )).first()
+
+        if user_exists:
+            return user_exists
+
         user = User(
             telegram_user_id=telegram_user_id,
             username=username,

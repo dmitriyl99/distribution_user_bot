@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 from app.scheduler.distributor import distribute
+from app.scheduler.parser import parse_channels_and_groups
 
 
 _scheduler = BackgroundScheduler(
@@ -21,6 +22,11 @@ _scheduler = BackgroundScheduler(
 
 def start():
     _scheduler.start()
+
+    _scheduler.add_job(
+        parse_channels_and_groups,
+        trigger=IntervalTrigger(hours=1)
+    )
 
 
 def stop():
