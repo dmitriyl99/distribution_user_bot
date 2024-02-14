@@ -68,4 +68,4 @@ def import_excel_file(path: str):
         distribution = distributions_repository.find_distribution_by_name(distribution_template_name)
         users_repository.update_user_distribution(telegram_id, distribution)
         if distribution:
-            scheduler.add_template(distribution)
+            scheduler.add_distribution(distribution)

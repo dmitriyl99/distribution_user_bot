@@ -9,7 +9,7 @@ from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
-from app.scheduler.template import template
+from app.scheduler.distributor import distribute
 
 
 _scheduler = BackgroundScheduler(
@@ -27,14 +27,14 @@ def stop():
     _scheduler.shutdown()
 
 
-def add_template(distribution: Distribution):
+def add_distribution(distribution: Distribution):
     print(f"adding template: {distribution.name}")
     existing_job = _scheduler.get_job(f'distribution:{distribution.id}')
     if existing_job:
         return
     if not distribution.interval_measure:
         _scheduler.add_job(
-            template,
+            distribute,
             trigger=DateTrigger(run_date=datetime.now() + timedelta(seconds=10)),
             args=[distribution.id],
             id=f'distribution:{distribution.id}'
@@ -43,13 +43,13 @@ def add_template(distribution: Distribution):
     additional_counts = distribution.interval_number * distribution.interval_count
     trigger = None
     if distribution.interval_measure == 'hour':
-        trigger = IntervalTrigger(hours=distribution.interval_number, end_date=datetime.now() + timedelta(hours=additional_counts))
+        trigger = IntervalTrigger(hours=distribution.interval_number, end_date=datetime.now() + timedelta(minutes=1) + timedelta(hours=additional_counts))
     elif distribution.interval_measure == 'day':
-        trigger = IntervalTrigger(days=distribution.interval_number, end_date=datetime.now() + relativedelta(days=additional_counts))
+        trigger = IntervalTrigger(days=distribution.interval_number, end_date=datetime.now() + timedelta(minutes=1) + relativedelta(days=additional_counts))
     elif distribution.interval_measure == 'week':
-        trigger = IntervalTrigger(weeks=distribution.interval_number, end_date=datetime.now() + relativedelta(weeks=additional_counts))
+        trigger = IntervalTrigger(weeks=distribution.interval_number, end_date=datetime.now() + timedelta(minutes=1) + relativedelta(weeks=additional_counts))
     if trigger:
         print(f"Add job distribution:{distribution.id}")
-        _scheduler.add_job(template, trigger=trigger, id=f'distribution:{distribution.id}', args=[distribution.id])
+        _scheduler.add_job(distribute, trigger=trigger, id=f'distribution:{distribution.id}', args=[distribution.id])
 
 

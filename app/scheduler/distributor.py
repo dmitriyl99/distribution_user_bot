@@ -11,7 +11,7 @@ import asyncio
 import time
 
 
-def template(distribution_id: int):
+def distribute(distribution_id: int):
     users = users_repository.get_users_by_distribution_id(distribution_id)
     distribution = distributions_repository.get_distribution_by_id(distribution_id)
 
