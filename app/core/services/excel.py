@@ -25,8 +25,8 @@ def generate_users_excel_file(users: List[User]) -> str:
             user.phone,
             user.created_at,
             user.channel.name if user.channel else "Не определено",
-            "",
-            "",
+            "Отправлена" if user.distribution_sent else 'Не отправлена',
+            user.distribution_date if user.distribution_date else "",
             user.distribution.name if user.distribution else "Не определено",
             ""
         ])
