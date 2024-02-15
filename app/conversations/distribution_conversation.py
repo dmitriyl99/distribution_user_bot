@@ -1,7 +1,7 @@
 from telegram import Update, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import ContextTypes, ConversationHandler, MessageHandler, filters
 
-from app import actions
+from app import actions, scheduler
 from app.core.repositories import distributions
 
 MENU, NAME, DISTRIBUTION_TYPE, INTERVAL_MEASURE, INTERVAL_NUMBER, INTERVAL_COUNT, TEXT = range(7)
@@ -42,6 +42,16 @@ async def process_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_html(f"Шаблон <b>{distribution.name}</b>\n\n"
                                                 f"Рассылка будет отправлена только один раз")
 
+        return MENU
+
+    if update.message.text == 'Включить рассылку':
+        scheduler.resume_distribution()
+        await update.message.reply_text("Рассылка включена")
+        return MENU
+
+    if update.message.text == 'Отключить рассылку':
+        scheduler.pause_distribution()
+        await update.message.reply_text("Рассылка приостановлена")
         return MENU
 
     if update.message.text == 'На главную':

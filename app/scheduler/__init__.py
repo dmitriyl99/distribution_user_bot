@@ -23,14 +23,28 @@ _scheduler = BackgroundScheduler(
 def start():
     _scheduler.start()
 
-    _scheduler.add_job(
-        parse_channels_and_groups,
-        trigger=IntervalTrigger(hours=1)
-    )
+    # _scheduler.add_job(
+    #     parse_channels_and_groups,
+    #     trigger=IntervalTrigger(hours=1)
+    # )
 
 
 def stop():
     _scheduler.shutdown()
+
+
+def pause_distribution():
+    jobs = _scheduler.get_jobs()
+    for job in jobs:
+        if job.id.startswith('distribution:'):
+            job.pause()
+
+
+def resume_distribution():
+    jobs = _scheduler.get_jobs()
+    for job in jobs:
+        if job.id.startswith('distribution:'):
+            job.resume()
 
 
 def add_distribution(distribution: Distribution):
