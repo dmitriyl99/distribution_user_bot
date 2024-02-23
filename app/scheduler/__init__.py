@@ -23,10 +23,11 @@ _scheduler = BackgroundScheduler(
 def start():
     _scheduler.start()
 
-    # _scheduler.add_job(
-    #     parse_channels_and_groups,
-    #     trigger=IntervalTrigger(hours=1)
-    # )
+    _scheduler.add_job(
+        parse_channels_and_groups,
+        id='parse_channels_and_groups_job',
+        trigger=IntervalTrigger(hours=1)
+    )
 
 
 def stop():
