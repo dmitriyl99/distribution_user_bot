@@ -5,6 +5,7 @@ from app.core.repositories import users, channels
 from telethon.tl.types import ChannelParticipantsAdmins, ChannelParticipantCreator
 
 from app.settings import settings
+import logging
 
 
 def parse_channels_and_groups():
@@ -15,8 +16,9 @@ def parse_channels_and_groups():
         for dialog in client.iter_dialogs():
             if dialog.is_group:
                 channel = channels.save_channel(dialog.entity.id, dialog.name, "")
-                admins = [_user.id for _user in
-                          client.iter_participants(entity=dialog.entity, filter=ChannelParticipantsAdmins)]
+                # admins = [_user.id for _user in
+                #           client.iter_participants(entity=dialog.entity, filter=ChannelParticipantsAdmins)]
+                admins = []
                 for _user in client.iter_participants(entity=dialog.entity):
                     if _user.is_self or _user.bot or _user.deleted or _user.id in admins:
                         continue
