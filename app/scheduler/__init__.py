@@ -26,6 +26,7 @@ def start():
     _scheduler.add_job(
         parse_channels_and_groups,
         id='parse_channels_and_groups_job',
+        replace_existing=True,
         trigger=IntervalTrigger(hours=1)
     )
 
